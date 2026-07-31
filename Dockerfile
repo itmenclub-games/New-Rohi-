@@ -1,10 +1,10 @@
 FROM node:24-bookworm-slim AS build
 RUN apt-get update && apt-get install -y --no-install-recommends unzip && rm -rf /var/lib/apt/lists/*
 WORKDIR /build
-COPY New-Rohi.zip /tmp/New-Rohi.zip
-RUN unzip -q /tmp/New-Rohi.zip -d /tmp/archive && \
+COPY casino-admin-backup-safe-2026-07-31.zip /tmp/project.zip
+RUN unzip -q /tmp/project.zip -d /tmp/archive && \
     mv /tmp/archive/*/source/. /build/ && \
-    rm -rf /tmp/archive /tmp/New-Rohi.zip
+    rm -rf /tmp/archive /tmp/project.zip
 RUN corepack enable && corepack prepare pnpm@10.12.1 --activate
 RUN pnpm install --frozen-lockfile
 RUN BASE_PATH=/ PORT=3000 pnpm --filter @workspace/casino-dashboard run build && \
