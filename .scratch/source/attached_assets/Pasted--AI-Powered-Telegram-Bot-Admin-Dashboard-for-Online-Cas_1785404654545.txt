@@ -1,0 +1,179 @@
+‎AI-Powered Telegram Bot + Admin Dashboard for Online Casino
+‎Professional. Clean. Just the important stuff. 
+‎â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+‎Frontend: React + TypeScript + Vite + Tailwind + shadcn/ui
+‎Backend: Node.js + Express + TypeScript
+‎Database: PostgreSQL 
+‎  Prisma ORM
+‎AI: Replit ai for demo, 
+‎Real-time: Socket.IO (basic)
+‎
+‎
+‎
+‎â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+‎TELEGRAM BOT:
+‎âœ“ Customer messages in Telegram
+‎âœ“ AI responses (friendly, conversational)
+‎âœ“ Context memory (remember conversation)
+‎âœ“ Escalate to staff when needed
+‎âœ“ Message history
+‎
+‎ADMIN DASHBOARD (PRO LOOKING):
+‎âœ“ Dark/Light mode
+‎âœ“ Responsive design
+‎âœ“ Modern UI
+‎âœ“ Professional colors
+‎
+‎ADMIN PAGES:
+‎1ï¸âƒ£ DASHBOARD
+‎â”œâ”€ Total conversations
+‎â”œâ”€ Pending requests
+‎â”œâ”€ Today's deposits/redeems
+‎â”œâ”€ Recent messages
+‎2ï¸âƒ£ CONVERSATIONS
+‎â”œâ”€ All chats
+‎â”œâ”€ Search customer
+‎â”œâ”€ View history
+‎â”œâ”€ Mark as resolved
+‎Staff can see chat and take control on chat from dashboard and also release bot to talk
+‎
+‎3ï¸âƒ£ DEPOSIT REQUESTS
+‎â”œâ”€ List pending deposits
+‎â”œâ”€ Customer info
+‎â”œâ”€ Amount
+‎â”œâ”€ Approve / Reject buttons
+‎â”œâ”€ Mark as completed
+‎â”œâ”€ View payment method used
+‎4ï¸âƒ£ REDEEM REQUESTS
+‎â”œâ”€ List pending redeems
+‎â”œâ”€ Customer info
+‎â”œâ”€ Amount
+‎â”œâ”€ Payment method selected
+‎â”œâ”€ Approve / Reject buttons
+‎â”œâ”€ Mark as completed
+‎5ï¸âƒ£ GAME ACCOUNT REQUESTS
+‎â”œâ”€ Customer requests for game account
+‎â”œâ”€ Game type
+‎â”œâ”€ Account details
+‎â”œâ”€ Approve / Reject buttons
+‎â”œâ”€ Send details to customer
+‎6ï¸âƒ£ FREE PLAY REQUESTS
+‎â”œâ”€ List pending free play requests
+‎â”œâ”€ Customer info
+‎â”œâ”€ Approve (a box for staff he can write how much he add freeplay )
+‎â”œâ”€ Reject
+‎â”œâ”€ Track approved free plays
+‎7ï¸âƒ£ GAMES MANAGEMENT
+‎â”œâ”€ List all games
+‎â”œâ”€ Add game
+‎â”œâ”€ Edit game (name, link, Description) 
+‎â”œâ”€ Delete game
+‎â”œâ”€ Enable/Disable game
+‎8ï¸âƒ£ PAYMENT METHODS AND REQUEST 
+‎â”œâ”€ List payment methods
+‎â”œâ”€ REQUEST FOR TAG
+‎â”œâ”€ Add payment method (each payment method can add multiple account details / Tags )
+‎â”œâ”€ Edit method
+‎â”œâ”€ Delete method
+‎â”œâ”€ Enable/Disable
+‎9ï¸âƒ£ BONUSES
+‎â”œâ”€ List bonuses
+‎â”œâ”€ Add bonus (name, min deposit Optional )
+‎â”œâ”€ Edit bonus
+‎â”œâ”€ Delete bonus
+‎â”œâ”€ Enable/Disable
+‎ðŸ”Ÿ FAQs
+‎â”œâ”€ List FAQs
+‎â”œâ”€ Add FAQ (category, question, answer)
+‎â”œâ”€ Edit FAQ
+‎â”œâ”€ Delete FAQ
+‎1ï¸âƒ£1ï¸âƒ£ Telegram button 
+‎â”œâ”€ List Telegram button 
+‎â”œâ”€ Add button 
+‎â”œâ”€ Edit 
+‎â”œâ”€ Delete 
+‎
+‎1ï¸âƒ£2ï¸âƒ£ SETTINGS
+‎â”œâ”€ Groq API key
+‎â”œâ”€ AI System prompt edit
+‎â”œâ”€ Min deposit amount
+‎â”œâ”€ Min redeem amount
+‎â”œâ”€ Max daily redeem
+‎â”œâ”€ Cashout blocked hours
+‎
+‎NOTIFICATIONS:
+‎âœ“ Toast notifications (top right)
+‎âœ“ Sound on new request
+‎âœ“ Request counter badge
+‎âœ“ Browser tab update
+‎-----------------------------------------------
+‎TELEGRAM AI BEHAVIOR
+‎â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+‎Conversational + Friendly 
+‎Knows about:
+‎â€¢ Games list (from database)
+‎â€¢ Payment methods (from database)
+‎â€¢ Bonuses (from database)
+‎â€¢ FAQs (from database)
+‎Can handle:
+‎â€¢ Game questions
+‎â€¢ Deposit questions
+‎â€¢ Redeem questions
+‎â€¢ Bonus questions
+‎â€¢ Account questions
+‎â€¢ General help
+‎Create buttons requests for:
+‎â€¢ Game account creation
+‎â€¢ Free play approval
+‎â€¢ Deposit/redeem 
+‎â€¢ Bonus
+‎FAQs
+‎Chat Support with Staff
+‎
+‎NEVER:
+‎âœ— Approve deposits
+‎âœ— Approve redeems
+‎âœ— Approve free play
+‎âœ— Send payment tags
+‎âœ— Change balance
+‎âœ— Ask for passwords
+‎-------------
+‎HOW SOME FUNCTIONS WILL WORK
+‎
+‎User click on Game Account Creation Button > Bot shows him game list > user select a game > will send him good answer, For Example Thank you for selecting (game name what ever uset selected ) Than Send Request to staff on dashboard for account details, Staff will see a box with 3 line, username, password and game link, staff fill this and click on Send, 
+‎User will get Details,
+‎
+‎NEXT user click on deposit, ai bot will show him deposit method, user select a method > show him selected method (i will tell you in next how to send account details ) Sent him tag, and ask for screenshot once screenshot received bot create deposit request to staff, 
+‎or if just user sent payment screenshot, ai bot will deduct it to confirm its a payment screenshot and send request to staff for deposit with User name, 
+‎
+‎Most important when user ask or click on payment method buttons, Ai bot showed him available methods, lets supposed user click on chime payment method bot will send request to staff on dashboard 
+‎Staff has button for each account detail for each payment method to send any specific information 
+‎
+‎User click on redeem Bot ask for Game and send request to staff handle this chat, 
+‎
+
+‎-----â€”-------------------------------
+‎IMPORTANT BUSINESS RULES
+‎â•â•â•
+‎DEPOSITS:
+‎â€¢ Min: $10
+‎â€¢ Payment methods: Chime, PayWint, Moneo, Apple Pay, Marchante
+‎â€¢ Require approval before processing
+‎REDEEMS:
+‎â€¢ Min: $50
+‎â€¢ Max per day: $1,500
+‎â€¢ Blocked: 3 AM - 9 AM
+‎â€¢ < $200 â†’ Chime preferred
+‎â€¢ >= $200 â†’ PayWint/Marchante preferred
+‎â€¢ Require approval before processing
+‎BONUSES:
+‎â€¢ Signup: 20%
+‎â€¢ Daily first deposit: 10%
+‎â€¢ Referral: $5 (friend needs min $20 deposit)
+‎FREE PLAY:
+‎â€¢ Amount: $2 (manual approval)
+‎
+‎Freeplay and referral bonuse rules
+‎
+‎â€¢ Win $50 â†’ Get $20 rule
+‎GAMES:

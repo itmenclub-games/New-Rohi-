@@ -1,0 +1,1 @@
+- [Casino project stack](casino-stack.md) — key decisions on OpenAPI codegen, DB schema exports, and Telegram integration
