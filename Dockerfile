@@ -3,7 +3,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends unzip && rm -rf
 WORKDIR /build
 COPY casino-admin-backup-safe-2026-07-31.zip /tmp/casino-admin-backup-safe-2026-07-31.zip
 RUN unzip -q /tmp/casino-admin-backup-safe-2026-07-31.zip -d /tmp/archive && \
-    cp -a /tmp/archive/*/source/. /build/ && \
+    cp -a /tmp/archive/source/. /build/ && \
     rm -rf /tmp/archive /tmp/casino-admin-backup-safe-2026-07-31.zip
 RUN corepack enable && corepack prepare pnpm@10.12.1 --activate
 RUN pnpm install --frozen-lockfile
