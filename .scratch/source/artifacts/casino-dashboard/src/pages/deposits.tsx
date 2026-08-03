@@ -226,6 +226,21 @@ export default function Deposits() {
                                 // If image fails to load, show fallback link
                                 const target = e.currentTarget;
                                 target.style.display = 'none';
+                                const fallback = target.nextElementSibling as HTMLAnchorElement;
+                                if (fallback) fallback.style.display = 'inline-flex';
+                              }}
+                            />
+                            <a 
+                              href={deposit.screenshotUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              className="text-xs text-blue-500 hover:underline inline-flex items-center gap-1 ml-2"
+                              style={{ display: 'none' }} // Hidden by default, shown if image fails
+                            >
+                              View Receipt <ExternalLink size={10} />
+                            </a>
+                          </div>
+                        )}
                                 // Find the next sibling which should be the fallback link
                                 const fallback = target.nextElementSibling as HTMLAnchorElement;
                                 if (fallback) fallback.style.display = 'inline-flex';

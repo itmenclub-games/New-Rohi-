@@ -63,23 +63,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
     }
   }, [stats]);
 
-  // Update document title if there are pending items
-  React.useEffect(() => {
-    if (!stats) return;
-    const totalPending = 
-      stats.pendingDeposits + 
-      stats.pendingRedeems + 
-      stats.pendingGameAccounts + 
-      stats.pendingFreePlay;
-      
-    if (totalPending > 0) {
-      document.title = `(${totalPending}) Casino Admin`;
-      // Play a sound hint theoretically if we tracked changes, but for now just title
-    } else {
-      document.title = `Casino Admin Dashboard`;
-    }
-  }, [stats]);
-
   return (
     <SidebarProvider>
       <Sidebar variant="sidebar" collapsible="offcanvas">
