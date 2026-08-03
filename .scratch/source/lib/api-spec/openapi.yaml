@@ -1,0 +1,1653 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Casino Admin Dashboard API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+  - name: dashboard
+  - name: conversations
+  - name: deposits
+  - name: redeems
+  - name: game-accounts
+  - name: free-play
+  - name: games
+  - name: payment-methods
+  - name: bonuses
+  - name: faqs
+  - name: telegram-buttons
+  - name: settings
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # ─── DASHBOARD ───────────────────────────────────────────────────────────────
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Get dashboard overview stats
+      responses:
+        "200":
+          description: Dashboard statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /dashboard/recent-messages:
+    get:
+      operationId: getRecentMessages
+      tags: [dashboard]
+      summary: Get recent messages across all conversations
+      responses:
+        "200":
+          description: Recent messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RecentMessage"
+
+  # ─── CONVERSATIONS ────────────────────────────────────────────────────────────
+  /conversations:
+    get:
+      operationId: listConversations
+      tags: [conversations]
+      summary: List all conversations
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [open, resolved, staff_handling]
+      responses:
+        "200":
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Conversation"
+
+  /conversations/{id}:
+    get:
+      operationId: getConversation
+      tags: [conversations]
+      summary: Get conversation with messages
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Conversation detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversationDetail"
+        "404":
+          description: Not found
+
+  /conversations/{id}/resolve:
+    patch:
+      operationId: resolveConversation
+      tags: [conversations]
+      summary: Mark conversation as resolved
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Updated conversation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Conversation"
+
+  /conversations/{id}/takeover:
+    patch:
+      operationId: takeoverConversation
+      tags: [conversations]
+      summary: Staff takes over conversation from bot
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Updated conversation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Conversation"
+
+  /conversations/{id}/release:
+    patch:
+      operationId: releaseConversation
+      tags: [conversations]
+      summary: Release conversation back to bot
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Updated conversation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Conversation"
+
+  /conversations/{id}/messages:
+    post:
+      operationId: sendStaffMessage
+      tags: [conversations]
+      summary: Staff sends a message in conversation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StaffMessageInput"
+      responses:
+        "201":
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+  # ─── DEPOSIT REQUESTS ─────────────────────────────────────────────────────────
+  /deposits:
+    get:
+      operationId: listDeposits
+      tags: [deposits]
+      summary: List deposit requests
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, approved, rejected, completed]
+      responses:
+        "200":
+          description: List of deposit requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DepositRequest"
+
+  /deposits/{id}/approve:
+    patch:
+      operationId: approveDeposit
+      tags: [deposits]
+      summary: Approve a deposit request
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Updated deposit
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DepositRequest"
+
+  /deposits/{id}/reject:
+    patch:
+      operationId: rejectDeposit
+      tags: [deposits]
+      summary: Reject a deposit request
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RejectInput"
+      responses:
+        "200":
+          description: Updated deposit
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DepositRequest"
+
+  /deposits/{id}/complete:
+    patch:
+      operationId: completeDeposit
+      tags: [deposits]
+      summary: Mark deposit as completed
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Updated deposit
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DepositRequest"
+
+  # ─── REDEEM REQUESTS ──────────────────────────────────────────────────────────
+  /redeems:
+    get:
+      operationId: listRedeems
+      tags: [redeems]
+      summary: List redeem requests
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, approved, rejected, completed]
+      responses:
+        "200":
+          description: List of redeem requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RedeemRequest"
+
+  /redeems/{id}/approve:
+    patch:
+      operationId: approveRedeem
+      tags: [redeems]
+      summary: Approve a redeem request
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Updated redeem
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RedeemRequest"
+
+  /redeems/{id}/reject:
+    patch:
+      operationId: rejectRedeem
+      tags: [redeems]
+      summary: Reject a redeem request
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RejectInput"
+      responses:
+        "200":
+          description: Updated redeem
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RedeemRequest"
+
+  /redeems/{id}/complete:
+    patch:
+      operationId: completeRedeem
+      tags: [redeems]
+      summary: Mark redeem as completed
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Updated redeem
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RedeemRequest"
+
+  # ─── GAME ACCOUNT REQUESTS ────────────────────────────────────────────────────
+  /game-accounts:
+    get:
+      operationId: listGameAccountRequests
+      tags: [game-accounts]
+      summary: List game account requests
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, fulfilled, rejected]
+      responses:
+        "200":
+          description: List of game account requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GameAccountRequest"
+
+  /game-accounts/{id}/fulfill:
+    patch:
+      operationId: fulfillGameAccountRequest
+      tags: [game-accounts]
+      summary: Fulfill a game account request and send credentials
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GameAccountCredentials"
+      responses:
+        "200":
+          description: Fulfilled request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameAccountRequest"
+
+  /game-accounts/{id}/reject:
+    patch:
+      operationId: rejectGameAccountRequest
+      tags: [game-accounts]
+      summary: Reject a game account request
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RejectInput"
+      responses:
+        "200":
+          description: Rejected request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameAccountRequest"
+
+  # ─── FREE PLAY REQUESTS ───────────────────────────────────────────────────────
+  /free-play:
+    get:
+      operationId: listFreePlayRequests
+      tags: [free-play]
+      summary: List free play requests
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, approved, rejected]
+      responses:
+        "200":
+          description: List of free play requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FreePlayRequest"
+
+  /free-play/{id}/approve:
+    patch:
+      operationId: approveFreePlay
+      tags: [free-play]
+      summary: Approve free play with amount
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FreePlayApproval"
+      responses:
+        "200":
+          description: Approved free play request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FreePlayRequest"
+
+  /free-play/{id}/reject:
+    patch:
+      operationId: rejectFreePlay
+      tags: [free-play]
+      summary: Reject free play request
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RejectInput"
+      responses:
+        "200":
+          description: Rejected free play
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FreePlayRequest"
+
+  # ─── GAMES MANAGEMENT ─────────────────────────────────────────────────────────
+  /games:
+    get:
+      operationId: listGames
+      tags: [games]
+      summary: List all games
+      responses:
+        "200":
+          description: List of games
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Game"
+    post:
+      operationId: createGame
+      tags: [games]
+      summary: Add a new game
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GameInput"
+      responses:
+        "201":
+          description: Created game
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+
+  /games/{id}:
+    patch:
+      operationId: updateGame
+      tags: [games]
+      summary: Update a game
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GameUpdate"
+      responses:
+        "200":
+          description: Updated game
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+    delete:
+      operationId: deleteGame
+      tags: [games]
+      summary: Delete a game
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "204":
+          description: Deleted
+
+  /games/{id}/toggle:
+    patch:
+      operationId: toggleGame
+      tags: [games]
+      summary: Enable or disable a game
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Updated game
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Game"
+
+  # ─── PAYMENT METHODS ──────────────────────────────────────────────────────────
+  /payment-methods:
+    get:
+      operationId: listPaymentMethods
+      tags: [payment-methods]
+      summary: List all payment methods
+      responses:
+        "200":
+          description: List of payment methods
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentMethod"
+    post:
+      operationId: createPaymentMethod
+      tags: [payment-methods]
+      summary: Add a payment method
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentMethodInput"
+      responses:
+        "201":
+          description: Created payment method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentMethod"
+
+  /payment-method-requests:
+    get:
+      operationId: listPaymentMethodRequests
+      tags: [payment-methods]
+      summary: List customer payment method information requests
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, sent]
+      responses:
+        "200":
+          description: Payment method information requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentMethodRequest"
+
+  /payment-methods/{id}:
+    patch:
+      operationId: updatePaymentMethod
+      tags: [payment-methods]
+      summary: Update a payment method
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentMethodUpdate"
+      responses:
+        "200":
+          description: Updated payment method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentMethod"
+    delete:
+      operationId: deletePaymentMethod
+      tags: [payment-methods]
+      summary: Delete a payment method
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "204":
+          description: Deleted
+
+  /payment-methods/{id}/toggle:
+    patch:
+      operationId: togglePaymentMethod
+      tags: [payment-methods]
+      summary: Enable or disable a payment method
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Updated payment method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentMethod"
+
+  /payment-methods/{id}/tags:
+    post:
+      operationId: addPaymentTag
+      tags: [payment-methods]
+      summary: Add a tag/account detail to payment method
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentTagInput"
+      responses:
+        "201":
+          description: Created tag
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentTag"
+
+  /payment-methods/{id}/tags/{tagId}:
+    delete:
+      operationId: deletePaymentTag
+      tags: [payment-methods]
+      summary: Delete a payment tag
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+        - in: path
+          name: tagId
+          required: true
+          schema:
+            type: number
+      responses:
+        "204":
+          description: Deleted
+
+  /payment-methods/{id}/send-tag:
+    post:
+      operationId: sendPaymentTag
+      tags: [payment-methods]
+      summary: Send a specific payment tag to a customer
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendTagInput"
+      responses:
+        "200":
+          description: Tag sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # ─── BONUSES ──────────────────────────────────────────────────────────────────
+  /bonuses:
+    get:
+      operationId: listBonuses
+      tags: [bonuses]
+      summary: List all bonuses
+      responses:
+        "200":
+          description: List of bonuses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Bonus"
+    post:
+      operationId: createBonus
+      tags: [bonuses]
+      summary: Create a bonus
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BonusInput"
+      responses:
+        "201":
+          description: Created bonus
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bonus"
+
+  /bonuses/{id}:
+    patch:
+      operationId: updateBonus
+      tags: [bonuses]
+      summary: Update a bonus
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BonusUpdate"
+      responses:
+        "200":
+          description: Updated bonus
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bonus"
+    delete:
+      operationId: deleteBonus
+      tags: [bonuses]
+      summary: Delete a bonus
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "204":
+          description: Deleted
+
+  /bonuses/{id}/toggle:
+    patch:
+      operationId: toggleBonus
+      tags: [bonuses]
+      summary: Enable or disable a bonus
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Updated bonus
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bonus"
+
+  # ─── FAQs ─────────────────────────────────────────────────────────────────────
+  /faqs:
+    get:
+      operationId: listFaqs
+      tags: [faqs]
+      summary: List all FAQs
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of FAQs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Faq"
+    post:
+      operationId: createFaq
+      tags: [faqs]
+      summary: Create a FAQ
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FaqInput"
+      responses:
+        "201":
+          description: Created FAQ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Faq"
+
+  /faqs/{id}:
+    patch:
+      operationId: updateFaq
+      tags: [faqs]
+      summary: Update a FAQ
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FaqUpdate"
+      responses:
+        "200":
+          description: Updated FAQ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Faq"
+    delete:
+      operationId: deleteFaq
+      tags: [faqs]
+      summary: Delete a FAQ
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "204":
+          description: Deleted
+
+  # ─── TELEGRAM BUTTONS ─────────────────────────────────────────────────────────
+  /telegram-buttons:
+    get:
+      operationId: listTelegramButtons
+      tags: [telegram-buttons]
+      summary: List Telegram buttons
+      responses:
+        "200":
+          description: List of buttons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TelegramButton"
+    post:
+      operationId: createTelegramButton
+      tags: [telegram-buttons]
+      summary: Create a Telegram button
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TelegramButtonInput"
+      responses:
+        "201":
+          description: Created button
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TelegramButton"
+
+  /telegram-buttons/{id}:
+    patch:
+      operationId: updateTelegramButton
+      tags: [telegram-buttons]
+      summary: Update a Telegram button
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TelegramButtonUpdate"
+      responses:
+        "200":
+          description: Updated button
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TelegramButton"
+    delete:
+      operationId: deleteTelegramButton
+      tags: [telegram-buttons]
+      summary: Delete a Telegram button
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        "204":
+          description: Deleted
+
+  # ─── SETTINGS ─────────────────────────────────────────────────────────────────
+  /settings:
+    get:
+      operationId: getSettings
+      tags: [settings]
+      summary: Get all settings
+      responses:
+        "200":
+          description: Settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Settings"
+    patch:
+      operationId: updateSettings
+      tags: [settings]
+      summary: Update settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SettingsUpdate"
+      responses:
+        "200":
+          description: Updated settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Settings"
+
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required: [success]
+
+    RejectInput:
+      type: object
+      properties:
+        reason:
+          type: string
+      required: []
+
+    # ─── DASHBOARD ───────────────────────────────────────────────────────────────
+    DashboardStats:
+      type: object
+      properties:
+        totalConversations:
+          type: number
+        activeConversations:
+          type: number
+        pendingDeposits:
+          type: number
+        pendingRedeems:
+          type: number
+        pendingGameAccounts:
+          type: number
+        pendingFreePlay:
+          type: number
+        todayDepositsCount:
+          type: number
+        todayRedeemsCount:
+          type: number
+        staffHandling:
+          type: number
+      required: [totalConversations, activeConversations, pendingDeposits, pendingRedeems, pendingGameAccounts, pendingFreePlay, todayDepositsCount, todayRedeemsCount, staffHandling]
+
+    RecentMessage:
+      type: object
+      properties:
+        id:
+          type: number
+        conversationId:
+          type: number
+        customerName:
+          type: string
+        customerTelegramId:
+          type: string
+        text:
+          type: string
+        senderType:
+          type: string
+          enum: [customer, bot, staff]
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, conversationId, customerName, customerTelegramId, text, senderType, createdAt]
+
+    # ─── CONVERSATIONS ────────────────────────────────────────────────────────────
+    Conversation:
+      type: object
+      properties:
+        id:
+          type: number
+        customerName:
+          type: string
+        customerTelegramId:
+          type: string
+        status:
+          type: string
+          enum: [open, resolved, staff_handling]
+        handledBy:
+          type: ["string", "null"]
+        lastMessage:
+          type: ["string", "null"]
+        lastMessageAt:
+          type: ["string", "null"]
+          format: date-time
+        messageCount:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, customerName, customerTelegramId, status, messageCount, createdAt, updatedAt]
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: number
+        conversationId:
+          type: number
+        text:
+          type: string
+        senderType:
+          type: string
+          enum: [customer, bot, staff]
+        senderName:
+          type: ["string", "null"]
+        mediaUrl:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, conversationId, text, senderType, createdAt]
+
+    ConversationDetail:
+      type: object
+      properties:
+        conversation:
+          $ref: "#/components/schemas/Conversation"
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/Message"
+      required: [conversation, messages]
+
+    StaffMessageInput:
+      type: object
+      properties:
+        text:
+          type: string
+      required: [text]
+
+    # ─── DEPOSITS ─────────────────────────────────────────────────────────────────
+    DepositRequest:
+      type: object
+      properties:
+        id:
+          type: number
+        customerName:
+          type: string
+        customerTelegramId:
+          type: string
+        conversationId:
+          type: number
+        amount:
+          type: ["number", "null"]
+        paymentMethod:
+          type: ["string", "null"]
+        screenshotUrl:
+          type: ["string", "null"]
+        details:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [pending, approved, rejected, completed]
+        rejectionReason:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, customerName, customerTelegramId, conversationId, status, createdAt, updatedAt]
+
+    # ─── REDEEMS ──────────────────────────────────────────────────────────────────
+    RedeemRequest:
+      type: object
+      properties:
+        id:
+          type: number
+        customerName:
+          type: string
+        customerTelegramId:
+          type: string
+        conversationId:
+          type: number
+        gameId:
+          type: ["number", "null"]
+        gameName:
+          type: ["string", "null"]
+        amount:
+          type: ["number", "null"]
+        paymentMethod:
+          type: ["string", "null"]
+        paymentDetails:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [pending, approved, rejected, completed]
+        rejectionReason:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, customerName, customerTelegramId, conversationId, status, createdAt, updatedAt]
+
+    # ─── GAME ACCOUNTS ────────────────────────────────────────────────────────────
+    GameAccountRequest:
+      type: object
+      properties:
+        id:
+          type: number
+        customerName:
+          type: string
+        customerTelegramId:
+          type: string
+        conversationId:
+          type: number
+        gameId:
+          type: number
+        gameName:
+          type: string
+        gameLink:
+          type: ["string", "null"]
+        credentialsUsername:
+          type: ["string", "null"]
+        credentialsPassword:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [pending, fulfilled, rejected]
+        rejectionReason:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, customerName, customerTelegramId, conversationId, gameId, gameName, status, createdAt, updatedAt]
+
+    GameAccountCredentials:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        gameLink:
+          type: string
+      required: [username, password, gameLink]
+
+    # ─── FREE PLAY ────────────────────────────────────────────────────────────────
+    FreePlayRequest:
+      type: object
+      properties:
+        id:
+          type: number
+        customerName:
+          type: string
+        customerTelegramId:
+          type: string
+        conversationId:
+          type: number
+        requestedAmount:
+          type: ["number", "null"]
+        approvedAmount:
+          type: ["number", "null"]
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        rejectionReason:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, customerName, customerTelegramId, conversationId, status, createdAt, updatedAt]
+
+    FreePlayApproval:
+      type: object
+      properties:
+        amount:
+          type: number
+      required: [amount]
+
+    # ─── GAMES ────────────────────────────────────────────────────────────────────
+    Game:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        link:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        enabled:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, name, enabled, createdAt, updatedAt]
+
+    GameInput:
+      type: object
+      properties:
+        name:
+          type: string
+        link:
+          type: string
+        description:
+          type: string
+      required: [name]
+
+    GameUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        link:
+          type: string
+        description:
+          type: string
+
+    # ─── PAYMENT METHODS ──────────────────────────────────────────────────────────
+    PaymentTag:
+      type: object
+      properties:
+        id:
+          type: number
+        paymentMethodId:
+          type: number
+        label:
+          type: string
+        accountDetails:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, paymentMethodId, label, accountDetails, createdAt]
+
+    PaymentMethod:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        enabled:
+          type: boolean
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/PaymentTag"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, name, enabled, tags, createdAt, updatedAt]
+
+    PaymentMethodInput:
+      type: object
+      properties:
+        name:
+          type: string
+      required: [name]
+
+    PaymentMethodUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+
+    PaymentTagInput:
+      type: object
+      properties:
+        label:
+          type: string
+        accountDetails:
+          type: string
+      required: [label, accountDetails]
+
+    SendTagInput:
+      type: object
+      properties:
+        tagId:
+          type: number
+        conversationId:
+          type: number
+        requestId:
+          type: number
+        depositId:
+          type: number
+      required: [tagId, conversationId]
+
+    PaymentMethodRequest:
+      type: object
+      properties:
+        id:
+          type: number
+        customerName:
+          type: string
+        customerTelegramId:
+          type: string
+        conversationId:
+          type: number
+        paymentMethodId:
+          type: number
+        paymentMethodName:
+          type: string
+        status:
+          type: string
+          enum: [pending, sent]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, customerName, customerTelegramId, conversationId, paymentMethodId, paymentMethodName, status, createdAt, updatedAt]
+
+    # ─── BONUSES ──────────────────────────────────────────────────────────────────
+    Bonus:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        minDeposit:
+          type: ["number", "null"]
+        percentage:
+          type: ["number", "null"]
+        enabled:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, name, enabled, createdAt, updatedAt]
+
+    BonusInput:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        minDeposit:
+          type: number
+        percentage:
+          type: number
+      required: [name]
+
+    BonusUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        minDeposit:
+          type: number
+        percentage:
+          type: number
+
+    # ─── FAQs ─────────────────────────────────────────────────────────────────────
+    Faq:
+      type: object
+      properties:
+        id:
+          type: number
+        category:
+          type: string
+        question:
+          type: string
+        answer:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, category, question, answer, createdAt, updatedAt]
+
+    FaqInput:
+      type: object
+      properties:
+        category:
+          type: string
+        question:
+          type: string
+        answer:
+          type: string
+      required: [category, question, answer]
+
+    FaqUpdate:
+      type: object
+      properties:
+        category:
+          type: string
+        question:
+          type: string
+        answer:
+          type: string
+
+    # ─── TELEGRAM BUTTONS ─────────────────────────────────────────────────────────
+    TelegramButton:
+      type: object
+      properties:
+        id:
+          type: number
+        label:
+          type: string
+        action:
+          type: string
+        order:
+          type: number
+        enabled:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, label, action, order, enabled, createdAt, updatedAt]
+
+    TelegramButtonInput:
+      type: object
+      properties:
+        label:
+          type: string
+        action:
+          type: string
+        order:
+          type: number
+      required: [label, action]
+
+    TelegramButtonUpdate:
+      type: object
+      properties:
+        label:
+          type: string
+        action:
+          type: string
+        order:
+          type: number
+        enabled:
+          type: boolean
+
+    # ─── SETTINGS ─────────────────────────────────────────────────────────────────
+    Settings:
+      type: object
+      properties:
+        groqApiKey:
+          type: ["string", "null"]
+        aiSystemPrompt:
+          type: ["string", "null"]
+        minDepositAmount:
+          type: number
+        minRedeemAmount:
+          type: number
+        maxDailyRedeem:
+          type: number
+        cashoutBlockedStart:
+          type: string
+        cashoutBlockedEnd:
+          type: string
+      required: [minDepositAmount, minRedeemAmount, maxDailyRedeem, cashoutBlockedStart, cashoutBlockedEnd]
+
+    SettingsUpdate:
+      type: object
+      properties:
+        groqApiKey:
+          type: string
+        aiSystemPrompt:
+          type: string
+        minDepositAmount:
+          type: number
+        minRedeemAmount:
+          type: number
+        maxDailyRedeem:
+          type: number
+        cashoutBlockedStart:
+          type: string
+        cashoutBlockedEnd:
+          type: string
