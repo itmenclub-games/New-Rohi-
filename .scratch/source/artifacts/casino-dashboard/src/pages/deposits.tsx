@@ -214,9 +214,33 @@ export default function Deposits() {
                       <div className="flex flex-col gap-1">
                         <span>{deposit.paymentMethod || 'Unknown'}</span>
                         {deposit.screenshotUrl && (
-                          <a href={deposit.screenshotUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:underline inline-flex items-center gap-1">
-                            View Receipt <ExternalLink size={10} />
-                          </a>
+                          <div className="relative inline-block group">
+                            <img 
+                              src={deposit.screenshotUrl} 
+                              alt="Payment receipt" 
+                              className="h-12 w-auto rounded border border-border object-cover cursor-pointer hover:opacity-80 transition-opacity" 
+                              onClick={() => {
+                                window.open(deposit.screenshotUrl, '_blank', 'noopener,noreferrer');
+                              }}
+                              onError={(e) => {
+                                // If image fails to load, show fallback link
+                                const target = e.currentTarget;
+                                target.style.display = 'none';
+                                // Find the next sibling which should be the fallback link
+                                const fallback = target.nextElementSibling as HTMLAnchorElement;
+                                if (fallback) fallback.style.display = 'inline-flex';
+                              }}
+                            />
+                            <a 
+                              href={deposit.screenshotUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              className="text-xs text-blue-500 hover:underline inline-flex items-center gap-1 ml-2"
+                              style={{ display: 'none' }} // Hidden by default, shown if image fails
+                            >
+                              View Receipt <ExternalLink size={10} />
+                            </a>
+                          </div>
                         )}
                         {deposit.details && (
                           <span className="text-xs text-muted-foreground max-w-[220px] truncate" title={deposit.details}>

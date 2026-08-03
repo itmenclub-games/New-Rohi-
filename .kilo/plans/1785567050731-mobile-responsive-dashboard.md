@@ -12,14 +12,19 @@ Make the casino admin dashboard usable on mobile viewports (320px–768px) witho
 
 ## Implementation Steps
 
-### 1. Layout (`components/layout.tsx`)
+### 1. Fixed Screenshot/Image Viewer (deposits.tsx)
+- Change screenshot link to show preview image on hover/tap instead of redirecting
+- Add inline image preview with error fallback to link
+- Image is clickable to open full size in new tab
+
+### 2. Layout (`components/layout.tsx`)
 - Wrap app in `SidebarProvider` from `@/components/ui/sidebar`
 - Replace custom `<aside>` with shadcn `Sidebar` + `SidebarContent` + nav items
 - Add `SidebarTrigger` (hamburger) visible only on mobile
 - Change main padding: `p-4 md:p-8`
 - Make header responsive: stack title and user info vertically on small screens
 
-### 2. Table Responsiveness
+### 3. Table Responsiveness
 Pages using `Table` need responsive wrappers or card fallbacks:
 - `games.tsx`
 - `deposits.tsx`
@@ -36,17 +41,17 @@ Each table should either:
 
 Conversations list already uses cards; keep as-is but ensure horizontal scroll for filter tabs.
 
-### 3. Conversations Page (`pages/conversations.tsx`)
+### 4. Conversations Page (`pages/conversations.tsx`)
 - On mobile, show list OR detail, not both side-by-side
 - Add a back button in detail view when on mobile
 - Use `useIsMobile()` to toggle between list and detail panels
 
-### 4. Dialogs & Forms
+### 5. Dialogs & Forms
 - Ensure dialogs use `max-w-[95vw]` on mobile
 - Stack form fields vertically (already mostly done)
 - Verify buttons have min 44px touch target
 
-### 5. Dashboard Stats (`pages/dashboard.tsx`)
+### 6. Dashboard Stats (`pages/dashboard.tsx`)
 - Already uses responsive grid (`grid-cols-1 md:grid-cols-2 lg:grid-cols-4`)
 - Verify no horizontal overflow in stat cards
 
