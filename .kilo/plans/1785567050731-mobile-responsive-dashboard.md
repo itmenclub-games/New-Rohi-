@@ -10,7 +10,7 @@ Make the casino admin dashboard usable on mobile viewports (320px–768px) witho
 - Conversations page uses split view (`w-1/3` list + detail) with no mobile fallback
 - shadcn `Sidebar` component exists but is unused
 
-## Changes
+## Implementation Steps
 
 ### 1. Layout (`components/layout.tsx`)
 - Wrap app in `SidebarProvider` from `@/components/ui/sidebar`
@@ -20,11 +20,7 @@ Make the casino admin dashboard usable on mobile viewports (320px–768px) witho
 - Make header responsive: stack title and user info vertically on small screens
 
 ### 2. Table Responsiveness
-Pages using `Table` need one of:
-- **Overflow wrapper**: wrap table in `div` with `overflow-x-auto` (simpler)
-- **Card fallback**: on mobile, render each row as a card with stacked key-value pairs (better UX)
-
-Target pages:
+Pages using `Table` need responsive wrappers or card fallbacks:
 - `games.tsx`
 - `deposits.tsx`
 - `redeems.tsx`
@@ -33,6 +29,10 @@ Target pages:
 - `payment-methods.tsx`
 - `bonuses.tsx`
 - `faqs.tsx`
+
+Each table should either:
+- Use `overflow-x-auto` wrapper, OR
+- Switch to card layout on mobile (`grid gap-4`)
 
 Conversations list already uses cards; keep as-is but ensure horizontal scroll for filter tabs.
 
